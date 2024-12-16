@@ -1,0 +1,52 @@
+.li-login {
+	font-weight: 700;
+}
+
+h2 {
+    text-align: center;
+	margin-bottom: 0;
+}
+
+input {
+    align-items: center;
+	margin-top: 7px;
+}
+
+.main-container {
+	width: 50%;
+	margin: auto;
+	margin-top: 150px;
+	margin-bottom: 355px;
+}
+
+.main-container > * {
+	text-align: center;
+}
+
+.main-container form  {
+	text-align: left;
+	margin-top: 37px;
+	display: flex;
+	flex-direction: column;
+}
+
+.main-container input {
+	height: 50px;
+	font-size: 1.2em;
+	border: none;
+	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+	margin-bottom: 30px;
+}
+
+.btn-se-connecter input {
+	margin-top: 7px;
+}
+
+.main-container a {
+    text-decoration: underline;
+}
+
+input[type="submit"] {
+	margin-bottom: 28px;
+	margin-top: 7px;
+}

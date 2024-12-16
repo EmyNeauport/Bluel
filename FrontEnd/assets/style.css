@@ -34,6 +34,11 @@ body {
 ol, ul {
 	list-style: none;
 }
+
+a {
+	text-decoration: none;
+	color: black;
+}
 blockquote, q {
 	quotes: none;
 }
@@ -95,9 +100,14 @@ nav li {
 	font-size: 1.2em;
 }
 
-li:hover {
+li:hover, a:hover {
 	color: #B1663C;
 }
+
+.li-projets {
+	font-weight: 600;
+}
+
 #introduction {
 	display: flex;
 	align-items: center;
@@ -164,16 +174,15 @@ button:hover {
 }
 #contact {
 	width: 50%;
-margin: auto;
+	margin: auto;
 }
 #contact > * {
 	text-align: center;
-
 }
 #contact h2{
 	margin-bottom: 20px;
 }
-#contact form {
+#contact form  {
 	text-align: left;
 	margin-top:30px;
 	display: flex;
