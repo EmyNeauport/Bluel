@@ -32,6 +32,7 @@ function afficherProjets (projets) {
 
 //**************************************************/
 
+//AFFICHER LES PROJETS
 afficherProjets (listeTravaux)
 
 //BOUTON - filtrer en affichant tous les projets

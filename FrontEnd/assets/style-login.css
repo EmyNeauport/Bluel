@@ -42,6 +42,10 @@ input {
 	margin-top: 7px;
 }
 
+.btn-se-connecter:hover {
+	cursor: pointer;
+}
+
 .main-container a {
     text-decoration: underline;
 }
