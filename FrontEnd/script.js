@@ -38,17 +38,17 @@ function afficherProjets (projets) {
 
 //fonction qui permet de modifier l'affichage en mode admin
 function afficherModeAdmin () {
-    const divToHide = document.querySelector(".button-container"); 
+    const divToHide = document.querySelector(".button-container") 
     //si l'utilisateur est connecté
     if (token) {
     if (divToHide) {
         //masquer les filtres
-        divToHide.style.display = "none";
+        divToHide.style.display = "none"
         //ajouter le bouton de modification
         let divModif = `
             <div>
                 <img src="./assets/icons/pen.svg" alt="Icone de modification">
-                <a href="" id="btn-modif">modifier</a>
+                <a id="btn-modif">modifier</a>
             </div>
         `
         divTitle.innerHTML = divModif
@@ -56,7 +56,37 @@ function afficherModeAdmin () {
         let b = document.querySelector("#portfolio h2")
         divTitle.appendChild(b)
     }
+    }
 }
+
+//fonction qui permet d'afficher la modale
+function afficherModale() {
+    const modal = document.createElement("aside")
+    modal.innerHTML = `
+        <div>
+            <h3>Galerie photo</h3>
+            <div></div>
+            <hr />
+            <button>Ajouter une photo</button>
+        </div>
+        <div>
+            <h3>Ajout photo</h3>
+            <div>
+                <img src="./assets/icons/img.svg"" alt="Icone photo" ></img>
+                <button>+ Ajouter une photo</button>
+                <p>jpg, png : 4mo max</p>
+            </div>
+            <form>
+                <label>Titre</label>
+                <input type="text" id ="titre" name="titre"></input>
+                <label>Catégorie</label>
+                <input type="text" id ="categorie" name="categorie"></input>
+                <hr />
+                <input type="" value="Valider"></btn>
+            </form>
+        </div>`
+    document.body.appendChild(modal)
+    console.log(modal)
 }
 
 //**************************************************/
@@ -103,3 +133,19 @@ for (let i = 0; i < listeCategories.length; i++) {
 
 //A LA CONNEXION, MODIFIER LA PAGE D'ACCUEIL
 afficherModeAdmin()
+
+//**************************************************/
+
+//AU CLIC SUR LE BOUTON MODIFIER, AFFICHER LA MODALE
+const boutonModifier = document.querySelector("#btn-modif")
+
+    //if (boutonModifier) {
+        boutonModifier.addEventListener("click", (event) => {
+            event.preventDefault() // Empêche le comportement par défaut
+            afficherModale() // Affiche la modale
+        })
+    //} else {
+    //    console.error("Le bouton 'modifier' n'a pas été trouvé !")
+    //}
+
+
