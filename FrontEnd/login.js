@@ -56,13 +56,6 @@ async function connexion(chargeUtile) {
         headers: { "Content-Type": "application/json" },   
         body: chargeUtile
         })
-    //récupérer le token
-    const data = await response.json()
-    const token = data.token
-    //stocker le token
-    window.sessionStorage.setItem("token",token)
-    //rediriger vers la page d'accueil
-    window.location.href = "index.html"
     //gérer les cas d'erreur
     switch (response.status) {
         case 404:
@@ -74,6 +67,15 @@ async function connexion(chargeUtile) {
         default:
             break
         }
+    //générer le token et passer en mode admin
+    if (response.status===200) {
+        const data = await response.json()
+        const token = data.token
+        //stocker le token
+        window.sessionStorage.setItem("token",token)
+        //rediriger vers la page d'accueil
+        window.location.href = "index.html"
+    }
 }
 
 let formulaire = document.querySelector("form")

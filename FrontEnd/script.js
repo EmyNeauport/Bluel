@@ -10,11 +10,17 @@ console.log(listeCategories)
 const gallery = document.querySelector(".gallery")
 const portfolio = document.querySelector("#portfolio")
 
-//créer une div qui contiendra les boutons, placer et rattacher cette div au HTML
+//créer une div qui contiendra les boutons
 let buttonContainer = document.createElement("div")
 buttonContainer.classList.add("button-container")
 portfolio.appendChild(buttonContainer)
 portfolio.insertBefore(buttonContainer, gallery)
+
+//créer une div qui contiendra le titre du portfolio et le bouton d'accès à la modale
+let divTitle = document.createElement("div")
+divTitle.classList.add("title-container")
+portfolio.appendChild(divTitle)
+portfolio.insertBefore(divTitle, buttonContainer)
 
 //fonction qui permet d'afficher les projets dans la galerie 
 function afficherProjets (projets) {
@@ -30,9 +36,39 @@ function afficherProjets (projets) {
     }
 }
 
+//fonction qui permet de modifier l'affichage en mode admin
+function afficherModeAdmin () {
+    const divToHide = document.querySelector(".button-container"); 
+    //si l'utilisateur est connecté
+    if (token) {
+    if (divToHide) {
+        //masquer les filtres
+        divToHide.style.display = "none";
+        //ajouter le bouton de modification
+        let divModif = `
+            <div>
+                <img src="./assets/icons/pen.svg" alt="Icone de modification">
+                <a href="" id="btn-modif">modifier</a>
+            </div>
+        `
+        divTitle.innerHTML = divModif
+
+        let b = document.querySelector("#portfolio h2")
+        divTitle.appendChild(b)
+    }
+}
+}
+
 //**************************************************/
 
 //AFFICHER LES PROJETS
+//réinitialiser le token
+const token = ("Token in index.html:", window.sessionStorage.getItem("token"))
+if (token) {
+    window.sessionStorage.removeItem("token")
+}
+
+//afficher les projets
 afficherProjets (listeTravaux)
 
 //BOUTON - filtrer en affichant tous les projets
@@ -62,3 +98,8 @@ for (let i = 0; i < listeCategories.length; i++) {
         console.log(projetsFiltres)
     })
 }
+
+//**************************************************/
+
+//A LA CONNEXION, MODIFIER LA PAGE D'ACCUEIL
+afficherModeAdmin()
