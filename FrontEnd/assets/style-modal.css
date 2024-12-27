@@ -28,3 +28,14 @@ aside button {
     background-color: #007bff;
     color: white;
 }
+
+#projet img {
+    max-width: 76px;
+}
+
+#div-galery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+}
