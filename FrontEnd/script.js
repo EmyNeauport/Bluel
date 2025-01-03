@@ -20,6 +20,30 @@ function afficherProjets (projets) {
     }
 }
 
+//fonction qui permet d'afficher les projets dans la modale
+function afficherProjetsModale() {
+    const divGalery = document.getElementById("div-galery")
+    divGalery.innerHTML = ""
+    for (let i = 0; i < listeTravaux.length; i++) {
+        //déclarer les variables
+        let projet = document.createElement("figure")
+        let imageProjet = document.createElement("img")
+        let trashWork = document.createElement("img")
+        //ajouter des attributs aux variables
+        imageProjet.src = listeTravaux[i].imageUrl
+        trashWork.src = "./assets/icons/trash.svg"
+        projet.classList.add("projet")
+        let idProjet = listeTravaux[i].id
+        imageProjet.classList.add(idProjet)
+        trashWork.classList.add("trash-icon")
+        trashWork.classList.add(idProjet)
+        //faire le lien avec l'arbre DOM
+        projet.appendChild(imageProjet)
+        projet.appendChild(trashWork)
+        divGalery.appendChild(projet)   
+        }
+}
+
 //fonction qui permet de mettre en place les filtres
 function afficherBoutons () {
     for (let i = 0; i < listeCategories.length; i++) {
@@ -75,8 +99,13 @@ function afficherModeAdmin (token) {
 
 //fonction qui permet d'afficher la modale
 function afficherModale() {
-    //créer la modale
+    //déclarer les variables
     const modal = document.createElement("aside")
+    let contenuMsgTitle = ""
+    let contenuMsgCategory = ""
+    let contenuMsgSubmit = ""
+    let fileTitle = ""
+    //créer la modale
     modal.id = "modal"
     modal.innerHTML = `
     <img id="arrow-left" src="./assets/icons/arrow-left.svg" alt="Flèche qui permet de retourner sur la première page de la modale">    
@@ -93,15 +122,19 @@ function afficherModale() {
                 <img src="./assets/icons/img.svg" alt="Icone photo" ></img>
                 <input type="file" id="fileElem" accept="image/*" style="display:none">
                 <button id="fileSelect" type="button">+ Ajouter une photo</button>
+                <p id="fileTitle">${fileTitle}</p>
                 <p>jpg, png : 4mo max</p>
             </div>
             <form>
                 <label>Titre</label>
                 <input type="text" id ="titre" name="titre"></input>
                 <label>Catégorie</label>
-                <input type="text" id ="categorie" name="categorie" list="category-list"></input>
+                <input type="select" id ="categorie" name="categorie" list="category-list"></input>
                 <hr />
+                <p id="msg-title">${contenuMsgTitle}</p>
+                <p id="msg-category">${contenuMsgCategory}</p>
                 <input type="submit" id="btn-validation" value="Valider"></btn>
+                <p id="msg-submit">${contenuMsgSubmit}</p>
             </form>
         </div>`
     document.body.appendChild(modal)
@@ -118,30 +151,11 @@ function afficherModale() {
     displayModal = true
     ajoutPhoto.style.display = "none"
     boutonRetour.style.display = "none"
-    console.log("display modal :"+displayModal)
-    
-    //afficher les projets retournés par l'API dans la galerie photo
-    divGalery.innerHTML = ""
-    for (let i = 0; i < listeTravaux.length; i++) {
-        //déclarer les variables
-        let projet = document.createElement("figure")
-        let imageProjet = document.createElement("img")
-        let trashWork = document.createElement("img")
-        //ajouter des attributs aux variables
-        imageProjet.src = listeTravaux[i].imageUrl
-        trashWork.src = "./assets/icons/trash.svg"
-        projet.classList.add("projet")
-        let idProjet = listeTravaux[i].id
-        imageProjet.classList.add(idProjet)
-        trashWork.classList.add("trash-icon")
-        trashWork.classList.add(idProjet)
-        //faire le lien avec l'arbre DOM
-        projet.appendChild(imageProjet)
-        projet.appendChild(trashWork)
-        divGalery.appendChild(projet)   
-        }
-    
-    //modifier le contenu de la modale au clic sur le bouton "Ajouter une photo"
+        
+    //afficher les projets retournés par l'API dans la galerie photo (1)
+    afficherProjetsModale()
+        
+    //modifier le contenu de la modale au clic sur le bouton "Ajouter une photo" (2)
     boutonAjout.addEventListener("click", () => {
         //modifier le contenu de la modale
         ajoutPhoto.style.display = "block"
@@ -154,15 +168,21 @@ function afficherModale() {
             dataList.id = "category-list"
             document.getElementById("ajout-photo").appendChild(dataList)
         }
-        let data = ""
+        dataList.innerHTML = ""
+        let data = []
         for (let i = 0; i < listeCategories.length; i++) {
-            const option = document.createElement("option");
-            option.value = listeCategories[i].id; // ID comme valeur
-            option.textContent = listeCategories[i].name; // Libellé visible
-        dataList.appendChild(option)
+            const a = {
+                id: listeCategories[i].id,
+                name: listeCategories[i].name,
+            }
+            data.push(a)
+            const option = document.createElement("option")
+            option.textContent = a.name
+            dataList.appendChild(option)
         }
-        dataList.innerHTML = data
-        })
+        const inputCategorie = document.getElementById("categorie");
+        inputCategorie.setAttribute("list", "category-list");
+    })  
 
     //retourner à la vue Galerie au clic sur le bouton retour
     boutonRetour.addEventListener("click", () => {
@@ -175,7 +195,6 @@ function afficherModale() {
     boutonFermer.addEventListener("click", () => {
         modal.remove()
         displayModal = false
-        console.log("display modal :"+displayModal)
     })
 
     //fermer la modale au clic en dehors de celle-ci
@@ -185,14 +204,13 @@ function afficherModale() {
             !modal.contains(event.target) && 
             !event.target.closest("#btn-modif")
         ) {
-            modal.remove();
-            displayModal = false;
-            console.log("display modal :" + displayModal);
+            modal.remove()
+            displayModal = false
         }
     })
 }
 
-//fonction qui permet de récupérer l'ID du projet à supprimer
+//fonction qui permet de supprimer un projet
 async function gererSuppression () {
     //récupérer l'ID du projet à supprimer
     //identifier toutes les icones de suppression
@@ -202,14 +220,13 @@ async function gererSuppression () {
         trashIcon.addEventListener("click", async(event) => {
             event.preventDefault()
             const workId = event.target.classList[1]
-            console.log("Classes de l'élément cliqué :", workId)
             //lancer la fonction de suppression
             await removeWork(workId)
         })
     })
 }
 
-//fonction qui permet de supprimer un projet
+//fonction qui permet d'appeler l'API DELETE (delete a work)
 async function removeWork(workId) {
     try {
         //appeler l'API
@@ -225,8 +242,17 @@ async function removeWork(workId) {
         })
         //gérer le retour
         if (response.status===204) {
-            console.log("ça marche")
-        }
+            //récupérer la liste mise à jour
+            const reponseTravaux = await fetch("http://localhost:5678/api/works")
+            listeTravaux = await reponseTravaux.json()
+
+            //mettre à jour la galerie principale
+            afficherProjets(listeTravaux)
+
+            //mettre à jour la galerie de la modale
+            afficherProjetsModale(listeTravaux)
+            gererSuppression(listeTravaux)
+            }
         //gérer les cas d'erreur
         switch (response.status) {
             case 401:
@@ -234,46 +260,22 @@ async function removeWork(workId) {
                 break
             default:
                 break
-            }
-        
-            //récupérer la liste mise à jour
-        const reponseTravaux = await fetch("http://localhost:5678/api/works")
-        listeTravaux = await reponseTravaux.json()
-
-        //mettre à jour la galerie principale
-        afficherProjets(listeTravaux)
-
-        //mettre à jour la galerie de la modale
-        const divGalery = document.getElementById("div-galery")
-        divGalery.innerHTML = ""
-        for (let i = 0; i < listeTravaux.length; i++) {
-            let projet = document.createElement("figure")
-            let imageProjet = document.createElement("img")
-            let trashWork = document.createElement("img")
-
-            imageProjet.src = listeTravaux[i].imageUrl
-            trashWork.src = "./assets/icons/trash.svg"
-
-            projet.classList.add("projet")
-            let idProjet = listeTravaux[i].id
-            imageProjet.classList.add(idProjet)
-            trashWork.classList.add("trash-icon")
-            trashWork.classList.add(idProjet)
-
-            projet.appendChild(imageProjet)
-            projet.appendChild(trashWork)
-            divGalery.appendChild(projet)
-        }
-    } catch (error)  {
+            }        
+    }
+    catch (error)  {
         console.error("Erreur lors de la suppression du projet :", error)
     }
 }
 
-function miseEnFormAjout() {
-    //gérer la mise en forme du bouton de selection du fichier
+//fonction qui permet d'ajouter un projet
+async function gererAjout() {
+    //déclarer les variables
     const fileSelect = document.getElementById("fileSelect")
     const fileElem = document.getElementById("fileElem")
-
+    const btnSubmit = document.getElementById("btn-validation")
+    const title = document.getElementById("titre")
+    const category = document.getElementById("categorie")
+    //gérer la mise en forme du bouton de selection d'un fichier
     fileSelect.addEventListener(
         "click",
         (e) => {
@@ -282,35 +284,50 @@ function miseEnFormAjout() {
           }
         },
         false,
-      )
-}
-
-//fonction qui permet de récupérer les informations du projet à ajouter
-async function gererAjout() {
-    const fileElem = document.getElementById("fileElem")
+    )
+    //afficher le nom du fichier lorsqu'il est selectionné
+    fileElem.addEventListener("change", () => {
+        const fileTitle = document.getElementById("fileTitle")
+        if (fileElem.files.length > 0) {
+            fileTitle.textContent = fileElem.files[0].name
+        }
+    })
+    //désactiver le bouton de soumission du formulaire
+    btnSubmit.disabled = true
+    //contrôler que les données sont renseignées, avant la soumission
+    dataControlBlur()
+    //activer le bouton de soumission si les informations sont renseignées
+    title.addEventListener("input", toggleSubmitButton)
+    category.addEventListener("input", toggleSubmitButton)
+        //A FAIRE : ajouter un contrôle sur la présence du fichier
+    //au clic sur le bouton
     const submitForm = document.getElementById("btn-validation")
-    const baliseCategorie = document.getElementById("categorie")
-    
-    // Écouter le clic sur "Valider"
     submitForm.addEventListener("click", async (event) => {
         event.preventDefault()
-        let categorySelected = baliseCategorie.value
-        // Créer un FormData et y ajouter les données
-        const formData = new FormData();
-        formData.append("image", fileElem.files[0]); // Ajouter le fichier
-        formData.append("title", document.getElementById("titre").value); // Ajouter le titre
-        formData.append("category", 1); // Ajouter la catégorie
-        // Afficher les données dans la console
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}:`, value);
+        //récupérer les infos qui permettent d'ajouter un projet
+        const fileElem = document.getElementById("fileElem")
+        //récupérer l'ID de la catégorie selectionnée par l'utilisateur
+        let select = document.querySelector("#categorie").value
+        let categorie
+        for (let i = 0; i < listeCategories.length; i++) {
+            if (listeCategories[i].name === select) {
+            categorie = listeCategories[i].id;
+            break
+            }
         }
-        await envoyerDonnees(formData)
+        const formData = new FormData()
+            formData.append("image", fileElem.files[0])
+            formData.append("title", document.getElementById("titre").value)
+            formData.append("category", categorie)
+        //lancer la fonction d'ajout
+        await addWork(formData)
     })
 }
-    
-// Fonction pour envoyer les données (facultatif)
-async function envoyerDonnees(formData) {
+
+//fonction qui permet d'appeler l'API POST (send a new work)
+async function addWork(formData) {
     try {
+        //appeler l'API
         const url = "http://localhost:5678/api/works"
         const tokenAPI = `Bearer ${token}`
         
@@ -321,80 +338,104 @@ async function envoyerDonnees(formData) {
             },
             body: formData,
         })
-    
-    if (response.ok) {
-            const data = await response.json();
-            console.log("Réponse de l'API :", data);
-            //récupérer la liste mise à jour
-            const reponseTravaux = await fetch("http://localhost:5678/api/works")
-            listeTravaux = await reponseTravaux.json()
-            //mettre à jour la galerie principale
-            afficherProjets(listeTravaux)
-            //mettre à jour la galerie de la modale
-            const divGalery = document.getElementById("div-galery")
-            divGalery.innerHTML = ""
-            for (let i = 0; i < listeTravaux.length; i++) {
-                let projet = document.createElement("figure")
-                let imageProjet = document.createElement("img")
-                let trashWork = document.createElement("img")
-
-                imageProjet.src = listeTravaux[i].imageUrl
-                trashWork.src = "./assets/icons/trash.svg"
-
-                projet.classList.add("projet")
-                let idProjet = listeTravaux[i].id
-                imageProjet.classList.add(idProjet)
-                trashWork.classList.add("trash-icon")
-                trashWork.classList.add(idProjet)
-
-                projet.appendChild(imageProjet)
-                projet.appendChild(trashWork)
-                divGalery.appendChild(projet)
-            }
-            //réattacher les événements de suppression
-            recupererIdProjet() 
-    } else { console.error("Erreur lors de l'envoi :", response.status, response.statusText) }
-    } 
+        //gérer le retour
+        if (response.ok) {
+                const data = await response.json()
+                //récupérer la liste mise à jour
+                const reponseTravaux = await fetch("http://localhost:5678/api/works")
+                listeTravaux = await reponseTravaux.json()
+                //mettre à jour la galerie principale
+                afficherProjets(listeTravaux)
+                //mettre à jour la galerie de la modale
+                afficherProjetsModale(listeTravaux)
+                gererSuppression(listeTravaux)
+                //confirmer à l'utilisateur l'ajout du projet
+                const msgSubmit = document.getElementById("msg-submit")
+                let msgSubmitValue = "Le projet a été ajouté avec succès, vous pouvez quitter cette fenêtre"
+                msgSubmit.innerHTML = msgSubmitValue
+        } else { 
+            console.error("Erreur lors de l'envoi :", response.status, response.statusText)
+            const msgSubmit = document.getElementById("msg-submit")
+            let msgSubmitValue = "Une erreur est survenue, le projet n'a pas pu être ajouté"
+            msgSubmit.innerHTML = msgSubmitValue
+        }
+    }
     catch (error) {
         console.error("Erreur réseau :", error)
+        const msgSubmit = document.getElementById("msg-submit")
+        let msgSubmitValue = "Une erreur est survenue, le projet n'a pas pu être ajouté"
+        msgSubmit.innerHTML = msgSubmitValue
     }
 }
 
-// function ajouterProjetGalerie() {
-//     //déclarer les variables
-//     let projet = document.createElement("figure")
-//     let imageProjet = document.createElement("img")
-//     let titreProjet = document.createElement("figcaption")
-//     //associer les attributs
-//     imageProjet.src = data.imageUrl
-//     titreProjet.innerText = data.title
-//     projet.classList.add("projet")
-//     //associer les éléments à l'arbre DOM
-//     projet.appendChild(imageProjet)
-//     projet.appendChild(titreProjet)
-//     gallery.appendChild(projet)
-// }
+//fonction qui contrôle les données saisies par l'utilisateur, avant la soumission
+function dataControlBlur() {
+    //déclarer les variables
+    const title = document.getElementById("titre")
+    const category = document.getElementById("categorie")
+    const msgTitle = document.getElementById("msg-title")
+    const msgCategory = document.getElementById("msg-category")
+    const contenuMsgTitle = ""
+    const contenuMsgCategory = ""
+    //contrôler la donnée titre
+    title.addEventListener("blur", (event) => {
+        const titlelValue = event.target.value.trim()
+        if(titlelValue === "") {
+            let msgTitleValue = "Veuillez renseigner le titre du projet à ajouter"
+            console.log(msgTitleValue)
+            msgTitle.innerHTML = msgTitleValue
+        } else {
+            let msgTitleValue = ""
+            console.log("pas d'erreur")
+            msgTitle.innerHTML = msgTitleValue
+        }
+    })
+    //contrôler la donnée catégorie
+    category.addEventListener("blur", (event) => {
+        const categoryValue = event.target.value.trim()
+        let isValidCategory = false
+        for (let i = 0; i < listeCategories.length; i++) {
+            if (listeCategories[i].name === categoryValue) {
+                isValidCategory = true
+                break
+            }
+        }
+        if(!isValidCategory) {
+            let msgCategoryValue = "Veuillez sélectionner une catégorie valide dans la liste"
+            console.log(msgCategoryValue)
+            msgCategory.innerHTML = msgCategoryValue
+        } else {
+            let msgCategoryValue = ""
+            console.log("pas d'erreur")
+            msgCategory.innerHTML = msgCategoryValue
+        }
+    })
+}
 
-// function ajouterProjetModale() {
-//     //déclarer les variables
-//     let projet = document.createElement("figure")
-//     let imageProjet = document.createElement("img")
-//     let trashWork = document.createElement("img")
-//     //associer les attributs
-//     imageProjet.src = data.imageUrl
-//     trashWork.src = "./assets/icons/trash.svg"
-//     projet.classList.add("projet")
-//     imageProjet.classList.add(data.id)
-//     trashWork.classList.add("trash-icon")
-//     trashWork.classList.add(data.id)
-//     //associer les éléments à l'arbre DOM
-//     projet.appendChild(imageProjet)
-//     projet.appendChild(trashWork)
-//     divGallery.appendChild(projet)   
-// }
-
-
-
+//fonction qui permet d'activer / désactiver le bouton de soumission du formulaire
+function toggleSubmitButton() {
+    //déclarer les variables
+    const title = document.getElementById("titre")
+    const category = document.getElementById("categorie")
+    const btnSubmit = document.getElementById("btn-validation")
+    //récupérer les valeurs
+    const titleValue = title.value.trim()
+    const categoryValue = category.value.trim()
+    // Vérifier si la catégorie est valide
+    let isValidCategory = false;
+    for (let i = 0; i < listeCategories.length; i++) {
+        if (listeCategories[i].name === categoryValue) {
+            isValidCategory = true
+            break
+        }
+    }
+    //activer le bouton de soumission seulement si les deux champs sont non vide
+    if (titleValue !== "" && isValidCategory) {
+        btnSubmit.disabled = false
+    } else {
+        btnSubmit.disabled = true
+    }
+}
 
 //**************************************************/
 //**************************************************/
@@ -408,13 +449,11 @@ const reponseTravaux = await fetch("http://localhost:5678/api/works")
 let listeTravaux = await reponseTravaux.json()
 const reponseCategories = await fetch ("http://localhost:5678/api/categories")
 const listeCategories = await reponseCategories.json()
-console.log(listeCategories)
 
 //récupérer les éléments du HTML
 const gallery = document.querySelector(".gallery")
 const portfolio = document.querySelector("#portfolio")
 const body = document.querySelector("body")
-console.log(body)
 
 //créer une div qui contiendra les boutons
 let buttonContainer = document.createElement("div")
@@ -433,7 +472,6 @@ const token = window.sessionStorage.getItem("token")
 
 //afficher les projets
 afficherProjets(listeTravaux)
-console.log(listeTravaux)
 
 //afficher les boutons
 afficherBoutonAll()
@@ -444,7 +482,6 @@ afficherBoutons()
 //MODIFIER LA PAGE D'ACCUEIL EN MODE ADMIN
 let isModeAdmin = false
 afficherModeAdmin(token)
-console.log("mode admin :"+isModeAdmin)
 
 //*********************MODALE***********************/
 
@@ -457,10 +494,9 @@ if (isModeAdmin) {
     if (boutonModifier) {
         boutonModifier.addEventListener("click", async (event) => {
             event.preventDefault()
-            afficherModale()
+            await afficherModale()
             gererSuppression()
-            miseEnFormAjout()
             gererAjout()
-        })
+        }) 
     }
 }
