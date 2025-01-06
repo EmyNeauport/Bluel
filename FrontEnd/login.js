@@ -89,13 +89,21 @@ async function connexion(chargeUtile) {
     }
 }
 
-
 //**************************************************/
 //**************************************************/
 
 //***************EXECUTION DU CODE******************/
 
 //METTRE EN PLACE LA PAGE DE CONNEXION
+
+//mettre en forme le header
+const listItems = document.querySelectorAll('header nav ul li')
+const firstItem = listItems[0]
+firstItem.innerHTML = `<a href="index.html">projets</a>`
+const thirdItem = listItems[2]
+thirdItem.innerHTML = `<a href="login.html">login</a>`
+
+//générer le contenu de la page
 let mainLogin = document.querySelector("main")
 
 let contenuTitre = "Log In"

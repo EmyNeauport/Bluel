@@ -12,6 +12,11 @@ input {
 	margin-top: 7px;
 }
 
+input[type="submit"] {
+	margin-bottom: 28px;
+	margin-top: 7px;
+}
+
 .main-container {
 	width: 50%;
 	margin: auto;
@@ -38,19 +43,14 @@ input {
 	margin-bottom: 30px;
 }
 
+.main-container a {
+    text-decoration: underline;
+}
+
 .btn-se-connecter input {
 	margin-top: 7px;
 }
 
 .btn-se-connecter:hover {
 	cursor: pointer;
-}
-
-.main-container a {
-    text-decoration: underline;
-}
-
-input[type="submit"] {
-	margin-bottom: 28px;
-	margin-top: 7px;
 }

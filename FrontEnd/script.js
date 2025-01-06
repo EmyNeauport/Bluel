@@ -41,7 +41,7 @@ function afficherProjetsModale() {
         projet.appendChild(imageProjet)
         projet.appendChild(trashWork)
         divGalery.appendChild(projet)   
-        }
+    }
 }
 
 //fonction qui permet de mettre en place les filtres
@@ -101,10 +101,10 @@ function afficherModeAdmin (token) {
 function afficherModale() {
     //déclarer les variables
     const modal = document.createElement("aside")
+    let contenuMsgFile = ""
     let contenuMsgTitle = ""
     let contenuMsgCategory = ""
     let contenuMsgSubmit = ""
-    let fileTitle = ""
     //créer la modale
     modal.id = "modal"
     modal.innerHTML = `
@@ -118,11 +118,11 @@ function afficherModale() {
         </div>
         <div id="ajout-photo">
             <h3>Ajout photo</h3>
-            <div>
+            <div id="div-ajout">
                 <img src="./assets/icons/img.svg" alt="Icone photo" ></img>
+                <p id="fileTitle"></p>
                 <input type="file" id="fileElem" accept="image/*" style="display:none">
-                <button id="fileSelect" type="button">+ Ajouter une photo</button>
-                <p id="fileTitle">${fileTitle}</p>
+                <button id="fileSelect" type="button">+ Ajouter photo</button>
                 <p>jpg, png : 4mo max</p>
             </div>
             <form>
@@ -131,6 +131,7 @@ function afficherModale() {
                 <label>Catégorie</label>
                 <input type="select" id ="categorie" name="categorie" list="category-list"></input>
                 <hr />
+                <p id="msg-file">${contenuMsgFile}</p>
                 <p id="msg-title">${contenuMsgTitle}</p>
                 <p id="msg-category">${contenuMsgCategory}</p>
                 <input type="submit" id="btn-validation" value="Valider"></btn>
@@ -276,17 +277,31 @@ async function gererAjout() {
     const title = document.getElementById("titre")
     const category = document.getElementById("categorie")
     //gérer la mise en forme du bouton de selection d'un fichier
-    fileSelect.addEventListener(
-        "click",
-        (e) => {
+    fileSelect.addEventListener("click", () => {
           if (fileElem) {
             fileElem.click()
           }
         },
         false,
     )
-    //afficher le nom du fichier lorsqu'il est selectionné
+    //afficher un aperçu et le nom du fichier lorsqu'il est selectionné
     fileElem.addEventListener("change", () => {
+        //afficher l'aperçu de la photo sélectionnée
+        const reader = new FileReader()
+        reader.onload = function (e) {
+            //sélectionner l'icone existant
+            const iconImage = document.querySelector("#div-ajout img")
+            //créer une balise pour l'aperçu de la photo
+            const imgPreview = document.createElement("img")
+            imgPreview.src = e.target.result
+            imgPreview.alt = "Aperçu de l'image"
+            imgPreview.style.maxWidth = "100%"
+            imgPreview.style.height = "auto"
+            //remplacer l'icône par l'aperçu de la photo
+            iconImage.replaceWith(imgPreview)
+        };
+        reader.readAsDataURL(fileElem.files[0]);
+        //afficher le nom de l'image sélectionnée
         const fileTitle = document.getElementById("fileTitle")
         if (fileElem.files.length > 0) {
             fileTitle.textContent = fileElem.files[0].name
@@ -297,9 +312,9 @@ async function gererAjout() {
     //contrôler que les données sont renseignées, avant la soumission
     dataControlBlur()
     //activer le bouton de soumission si les informations sont renseignées
+    fileElem.addEventListener("change", toggleSubmitButton)
     title.addEventListener("input", toggleSubmitButton)
     category.addEventListener("input", toggleSubmitButton)
-        //A FAIRE : ajouter un contrôle sur la présence du fichier
     //au clic sur le bouton
     const submitForm = document.getElementById("btn-validation")
     submitForm.addEventListener("click", async (event) => {
@@ -371,22 +386,29 @@ async function addWork(formData) {
 //fonction qui contrôle les données saisies par l'utilisateur, avant la soumission
 function dataControlBlur() {
     //déclarer les variables
+    const fileElem = document.getElementById("fileElem")
     const title = document.getElementById("titre")
     const category = document.getElementById("categorie")
+    const msgFile = document.getElementById("msg-file")
     const msgTitle = document.getElementById("msg-title")
     const msgCategory = document.getElementById("msg-category")
-    const contenuMsgTitle = ""
-    const contenuMsgCategory = ""
+    msgFile.innerHTML = "Veuillez sélectionner la photo du projet à ajouter"
+    //contrôler la présence d'un fichier
+    fileElem.addEventListener("change", () => {
+        const isFileLoaded = fileElem.files && fileElem.files.length > 0
+        if(isFileLoaded) {
+            let msgFileValue = ""
+            msgFile.innerHTML = msgFileValue
+        }
+    })
     //contrôler la donnée titre
     title.addEventListener("blur", (event) => {
         const titlelValue = event.target.value.trim()
         if(titlelValue === "") {
             let msgTitleValue = "Veuillez renseigner le titre du projet à ajouter"
-            console.log(msgTitleValue)
             msgTitle.innerHTML = msgTitleValue
         } else {
             let msgTitleValue = ""
-            console.log("pas d'erreur")
             msgTitle.innerHTML = msgTitleValue
         }
     })
@@ -402,11 +424,9 @@ function dataControlBlur() {
         }
         if(!isValidCategory) {
             let msgCategoryValue = "Veuillez sélectionner une catégorie valide dans la liste"
-            console.log(msgCategoryValue)
             msgCategory.innerHTML = msgCategoryValue
         } else {
             let msgCategoryValue = ""
-            console.log("pas d'erreur")
             msgCategory.innerHTML = msgCategoryValue
         }
     })
@@ -415,13 +435,14 @@ function dataControlBlur() {
 //fonction qui permet d'activer / désactiver le bouton de soumission du formulaire
 function toggleSubmitButton() {
     //déclarer les variables
+    const fileElem = document.getElementById("fileElem")
     const title = document.getElementById("titre")
     const category = document.getElementById("categorie")
     const btnSubmit = document.getElementById("btn-validation")
     //récupérer les valeurs
     const titleValue = title.value.trim()
     const categoryValue = category.value.trim()
-    // Vérifier si la catégorie est valide
+    //vérifier si la catégorie est valide
     let isValidCategory = false;
     for (let i = 0; i < listeCategories.length; i++) {
         if (listeCategories[i].name === categoryValue) {
@@ -429,8 +450,10 @@ function toggleSubmitButton() {
             break
         }
     }
+    //vérifier si un fichier est chargé
+    const isFileLoaded = fileElem.files && fileElem.files.length > 0
     //activer le bouton de soumission seulement si les deux champs sont non vide
-    if (titleValue !== "" && isValidCategory) {
+    if (titleValue !== "" && isValidCategory && isFileLoaded) {
         btnSubmit.disabled = false
     } else {
         btnSubmit.disabled = true
@@ -455,6 +478,13 @@ const gallery = document.querySelector(".gallery")
 const portfolio = document.querySelector("#portfolio")
 const body = document.querySelector("body")
 
+//mettre en forme le header
+const listItems = document.querySelectorAll('header nav ul li')
+const firstItem = listItems[0]
+firstItem.innerHTML = `<a href="index.html">projets</a>`
+const thirdItem = listItems[2]
+thirdItem.innerHTML = `<a href="login.html">login</a>`
+
 //créer une div qui contiendra les boutons
 let buttonContainer = document.createElement("div")
 buttonContainer.classList.add("button-container")
@@ -468,7 +498,10 @@ portfolio.appendChild(divTitle)
 portfolio.insertBefore(divTitle, buttonContainer)
 
 //récupérer le token si il a déjà été généré
-const token = window.sessionStorage.getItem("token")
+let token = window.sessionStorage.getItem("token")
+if (token) {
+    thirdItem.innerHTML = `<a id="log-out">logout</a>`
+}
 
 //afficher les projets
 afficherProjets(listeTravaux)
@@ -485,9 +518,7 @@ afficherModeAdmin(token)
 
 //*********************MODALE***********************/
 
-//AU CLIC SUR LE BOUTON MODIFIER, AFFICHER LA MODALE
-
-//afficher la modale
+//AFFICHER LA MODALE
 let displayModal = false
 if (isModeAdmin) {
     const boutonModifier = document.querySelector("#btn-modif")
@@ -499,4 +530,18 @@ if (isModeAdmin) {
             gererAjout()
         }) 
     }
+}
+
+//******************DECONNEXION*********************/
+
+//QUITTER LE MODE ADMIN
+if (isModeAdmin) {
+    const boutonLogout = document.getElementById("log-out")
+    boutonLogout.addEventListener("click", (event) => {
+        event.preventDefault()
+        window.sessionStorage.removeItem("token")
+        token = null
+        isModeAdmin = false
+        window.location.href = "index.html"
+    })
 }

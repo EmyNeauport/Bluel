@@ -1,4 +1,3 @@
-/* Styles pour la modale */
 aside {
     position: fixed;
     top: 50%;
@@ -7,35 +6,164 @@ aside {
     background-color: white;
     border-radius: 8px;
     padding: 20px;
-    width: 400px;
+    width: 500px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     z-index: 1001;
     display: block;
-    text-align: center;
 }
 
-/* Optionnel : Style de base pour le texte et les boutons dans la modale */
 aside h3 {
-    margin-bottom: 15px;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 26px;
 }
 
 aside button {
-    padding: 10px 15px;
-    font-size: 14px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    background-color: #007bff;
     color: white;
+	background-color: #1D6154;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    display: flex;
+    margin-right: auto;
+    margin-left: auto;
+    align-items: center;
+}
+
+aside form {
+    display: flex;
+    flex-direction: column;
+}
+
+aside label {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+aside hr {
+    border: none;
+    height: 1px;
+    background-color: #b3b3b3;
+    margin: 5px 0;
+    margin-top: 50px;
+}
+
+aside #msg-title {
+    color: #B1663C;
+    font-style: italic;
+}
+
+aside #msg-category {
+    color: #B1663C;
+    font-style: italic;
+}
+
+aside #msg-submit {
+    color: #B1663C;
+    font-style: italic;
+}
+
+aside #msg-file {
+    color: #B1663C;
+    font-style: italic;
 }
 
 .projet img {
     max-width: 76px;
+    margin-bottom: 20px;
+}
+
+.trash-icon {
+    position: relative;
+    left : -20px;
+    bottom : 80px;
 }
 
 #div-galery {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
     justify-content: space-between;
 }
+
+#div-ajout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #E8F1F6;
+    
+}
+
+#div-ajout img {
+    width: 76px;
+    left: 76px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#div-ajout p {
+    margin-top: 0px;
+    margin-bottom: 15px;
+    color: #444444;
+}
+
+#div-ajout button{
+    margin: 0;
+}
+
+#div-ajout {
+    position: relative;
+    width: 100%;
+    background-color: #E8F1F6;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#div-ajout #img-preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+#btn-close {
+    position: relative;
+    left: 480px;
+}
+
+#btn-validation:disabled {
+    background-color: #A7A7A7;
+    cursor: not-allowed;
+}
+
+#btn-validation:not(:disabled) {
+    background-color: #1D6154; 
+    cursor: pointer;
+}
+
+#arrow-left {
+    position: relative;
+    top: 20px;
+}
+
+#ajout-photo {
+    margin-right: 50px;
+    margin-left: 50px;
+}
+
+#ajout-photo input {
+	height: 50px;
+	font-size: 1.2em;
+	border: none;
+	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+}
+
+#fileSelect {
+    background-color: #CBD6DC;
+    border-color: #CBD6DC;
+    color: #306685;
+}
+
