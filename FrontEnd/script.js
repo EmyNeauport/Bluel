@@ -129,7 +129,7 @@ function afficherModale() {
                 <label>Titre</label>
                 <input type="text" id ="titre" name="titre"></input>
                 <label>Catégorie</label>
-                <input type="select" id ="categorie" name="categorie" list="category-list"></input>
+                <select id ="categorie" name="categorie" list="category-list"></select>
                 <hr />
                 <p id="msg-file">${contenuMsgFile}</p>
                 <p id="msg-title">${contenuMsgTitle}</p>
@@ -162,27 +162,27 @@ function afficherModale() {
         ajoutPhoto.style.display = "block"
         galeriePhoto.style.display = "none"
         boutonRetour.style.display = "block"
-        //récupérer le contenu de la liste déroulante "Catégorie" via l'API
-        let dataList = document.getElementById("category-list") // je ne comprends pas car il n'y a pas d'ID "category-list" associé à datalist
-        if (!dataList) {
-            dataList = document.createElement("datalist")
-            dataList.id = "category-list"
-            document.getElementById("ajout-photo").appendChild(dataList)
-        }
-        dataList.innerHTML = ""
-        let data = []
-        for (let i = 0; i < listeCategories.length; i++) {
-            const a = {
-                id: listeCategories[i].id,
-                name: listeCategories[i].name,
+        //génerer le contenu de la liste déroulante
+        let select = document.getElementById("categorie")
+        select.innerHTML = ""
+            //par défaut, pas de valeur selectionnée dans la liste déroulante
+            const firstOption = document.createElement("option");
+            firstOption.value = ""
+            firstOption.textContent = ""
+            firstOption.disabled = true
+            firstOption.selected = true
+            select.appendChild(firstOption)
+            //générer le contenu de la liste déroulante
+            for (let i = 0; i < listeCategories.length; i++) {
+                const optionContent = {
+                    id: listeCategories[i].id,
+                    name: listeCategories[i].name,
+                }
+                const option = document.createElement("option")
+                option.value = optionContent.id
+                option.textContent = optionContent.name
+                select.appendChild(option)
             }
-            data.push(a)
-            const option = document.createElement("option")
-            option.textContent = a.name
-            dataList.appendChild(option)
-        }
-        const inputCategorie = document.getElementById("categorie");
-        inputCategorie.setAttribute("list", "category-list");
     })  
 
     //retourner à la vue Galerie au clic sur le bouton retour
@@ -322,14 +322,8 @@ async function gererAjout() {
         //récupérer les infos qui permettent d'ajouter un projet
         const fileElem = document.getElementById("fileElem")
         //récupérer l'ID de la catégorie selectionnée par l'utilisateur
-        let select = document.querySelector("#categorie").value
-        let categorie
-        for (let i = 0; i < listeCategories.length; i++) {
-            if (listeCategories[i].name === select) {
-            categorie = listeCategories[i].id;
-            break
-            }
-        }
+        let select = document.getElementById("categorie")
+        let categorie = select.value
         const formData = new FormData()
             formData.append("image", fileElem.files[0])
             formData.append("title", document.getElementById("titre").value)
@@ -414,7 +408,7 @@ function dataControlBlur() {
     })
     //contrôler la donnée catégorie
     category.addEventListener("blur", (event) => {
-        const categoryValue = event.target.value.trim()
+        const categoryValue = category.options[category.selectedIndex].textContent
         let isValidCategory = false
         for (let i = 0; i < listeCategories.length; i++) {
             if (listeCategories[i].name === categoryValue) {
@@ -441,7 +435,7 @@ function toggleSubmitButton() {
     const btnSubmit = document.getElementById("btn-validation")
     //récupérer les valeurs
     const titleValue = title.value.trim()
-    const categoryValue = category.value.trim()
+    const categoryValue = category.options[category.selectedIndex].textContent
     //vérifier si la catégorie est valide
     let isValidCategory = false;
     for (let i = 0; i < listeCategories.length; i++) {
