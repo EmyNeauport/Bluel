@@ -1,6 +1,6 @@
 //********************FONCTIONS*********************/
 
-//fonction qui contrôle les données saisies par l'utilisateur, avant la soumission
+//fonction qui contrôle les données saisies par l'utilisateur, avant la soumission du formulaire de connexion
 function dataControlBlur() {
     //contrôler la donnée 'e-mail'
     email.addEventListener("blur", (event) => {
@@ -26,7 +26,7 @@ function dataControlBlur() {
     })
 }
 
-//fonction qui permet d'activer / désactiver le bouton de soumission du formulaire
+//fonction qui permet d'activer / désactiver le bouton de soumission du formulaire de connexion
 function toggleSubmitButton() {
     //déclarer les variables
     const emailValue = email.value.trim()
@@ -39,7 +39,7 @@ function toggleSubmitButton() {
     }
 }
 
-//fonction qui récupère les informations renseignées par l'utilisateur
+//fonction qui récupère les informations de connexion renseignées par l'utilisateur
 async function recupererInfosLogin () {
     //récupérer l'e-mail renseigné
     let baliseEmail = document.getElementById("mail")
@@ -57,7 +57,7 @@ async function recupererInfosLogin () {
     return chargeUtile
 }
 
-//fonction qui appelle l'API avec les informations renseignées par l'utilisateur
+//fonction qui appelle l'API de connexion avec les informations renseignées par l'utilisateur
 async function connexion(chargeUtile) {
     //appeler l'API
     const response = await fetch ("http://localhost:5678/api/users/login", {
@@ -150,15 +150,15 @@ const msgConnexionUn = document.getElementById("msg-connexion-un")
 const msgConnexionDeux = document.getElementById("msg-connexion-deux")
 const btn = document.getElementById("btn")
 
-//désactiver le bouton de soumission du formulaire
+//désactiver le bouton de soumission du formulaire de connexion
 btn.disabled = true
 
 //contrôler que les données sont renseignées, avant la soumission
 dataControlBlur()
 
 //activer le bouton de soumission si les informations sont renseignées
-email.addEventListener("input", toggleSubmitButton);
-pw.addEventListener("input", toggleSubmitButton);
+email.addEventListener("input", toggleSubmitButton)
+pw.addEventListener("input", toggleSubmitButton)
 
 //au clic sur le bouton "Se connecter" déclencher plusieurs actions
 form.addEventListener("submit", async (event) => {

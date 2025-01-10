@@ -54,3 +54,8 @@ input[type="submit"] {
 .btn-se-connecter:hover {
 	cursor: pointer;
 }
+
+.btn-se-connecter:disabled {
+    background-color: #A7A7A7;
+    cursor: not-allowed;
+}

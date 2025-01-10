@@ -61,7 +61,7 @@ function afficherBoutons () {
     }
 }
 
-//fonction qui permet de mettre en place le filtre 'ALL' (pour gérer la réinitialisation des filtres)
+//fonction qui permet de mettre en place le filtre 'ALL' (gérer la réinitialisation des filtres)
 function afficherBoutonAll () {
     //créer le bouton
     let buttonAll = document.createElement("button")
@@ -69,7 +69,6 @@ function afficherBoutonAll () {
     buttonContainer.appendChild(buttonAll)
     //associer une action au bouton
     buttonAll.addEventListener("click", () => {
-        //gallery.innerHTML = ""
         afficherProjets (listeTravaux)
     })
 }
@@ -105,6 +104,7 @@ function afficherModale() {
     let contenuMsgTitle = ""
     let contenuMsgCategory = ""
     let contenuMsgSubmit = ""
+    
     //créer la modale
     modal.id = "modal"
     modal.innerHTML = `
@@ -213,13 +213,13 @@ function afficherModale() {
 
 //fonction qui permet de supprimer un projet
 async function gererSuppression () {
-    //récupérer l'ID du projet à supprimer
     //identifier toutes les icones de suppression
     const trashIcons = document.querySelectorAll(".trash-icon")
-    //au clic sur une icone, récupérer l'ID du projet associé
+    //au clic sur une icone, 
     trashIcons.forEach((trashIcon) => {
         trashIcon.addEventListener("click", async(event) => {
             event.preventDefault()
+            //récupérer l'ID du projet à supprimer
             const workId = event.target.classList[1]
             //lancer la fonction de suppression
             await removeWork(workId)
@@ -377,7 +377,7 @@ async function addWork(formData) {
     }
 }
 
-//fonction qui contrôle les données saisies par l'utilisateur, avant la soumission
+//fonction qui contrôle les données saisies par l'utilisateur, avant la soumission du formulaire d'ajout d'un projet
 function dataControlBlur() {
     //déclarer les variables
     const fileElem = document.getElementById("fileElem")
@@ -426,7 +426,7 @@ function dataControlBlur() {
     })
 }
 
-//fonction qui permet d'activer / désactiver le bouton de soumission du formulaire
+//fonction qui permet d'activer / désactiver le bouton de soumission du formulaire d'ajout d'un projet
 function toggleSubmitButton() {
     //déclarer les variables
     const fileElem = document.getElementById("fileElem")
